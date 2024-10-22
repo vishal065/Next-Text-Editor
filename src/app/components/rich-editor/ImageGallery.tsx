@@ -1,17 +1,34 @@
-import { FC } from "react";
+"use client";
+import { FC, useState } from "react";
 import { IoMdClose } from "react-icons/io";
 import { FileUploader } from "react-drag-drop-files";
 import { IoCloudUploadOutline } from "react-icons/io5";
 import GalleryImage from "./GalleryImage";
+import { uploadFile } from "@/app/actions/file";
+import { useImages } from "@/app/context/ImageProvider";
 
 interface Props {
   visible: boolean;
   onClose(state: boolean): void;
+  onSelect?(src: string): void;
 }
 
-const ImageGallery: FC<Props> = ({ visible, onClose }) => {
+const ImageGallery: FC<Props> = ({ visible, onClose, onSelect }) => {
+  const [isUploading, setIsUploading] = useState(false);
+  //
+  const image = useImages();
+  const images = image?.images;
+  //
+  const upadateImages = image?.updateImages;
+  //
   const handleClose = () => {
     onClose(!visible);
+  };
+  const handleSelection = (image: string) => {
+    if (onSelect) {
+      onSelect(image);
+    }
+    handleClose();
   };
 
   if (!visible) return null;
@@ -31,7 +48,20 @@ const ImageGallery: FC<Props> = ({ visible, onClose }) => {
           </button>
         </div>
         <FileUploader
-          handleChange={(file:File) => {}}
+          handleChange={async (file: File) => {
+            try {
+              setIsUploading(true);
+              const formData = new FormData();
+              formData.append("file", file);
+              const resp = await uploadFile(formData);
+              if (resp && upadateImages) {
+                upadateImages([resp.secure_url]);
+              }
+              setIsUploading(false);
+            } catch (error) {
+              console.log(error);
+            }
+          }}
           name="file"
           types={["png", "jpg", "webp"]}
         >
@@ -69,11 +99,22 @@ const ImageGallery: FC<Props> = ({ visible, onClose }) => {
             </label>
           </div>
         </FileUploader>
-        <p className="p-4 text-center text-2xl font-semibold opacity-45">
-          No Images to Display
-        </p>
+        {images?.length ? (
+          <p className="p-4 text-center text-2xl font-semibold opacity-45">
+            No Images to Display
+          </p>
+        ) : null}
         <div className="grid grid-cols-2 md:grid-cols-4 mt-4 gap-4 ">
-          <GalleryImage src="https://docs.weweb.io/assets/npm1.CZGvc_og.png" />
+          {isUploading && (
+            <div className="w-full aspect-square rounded animate-pulse bg-gray-200"></div>
+          )}
+          {images?.map((item, i) => (
+            <GalleryImage
+              onSelectClick={() => handleSelection(item)}
+              key={i}
+              src={item}
+            />
+          ))}
         </div>
       </div>
     </div>

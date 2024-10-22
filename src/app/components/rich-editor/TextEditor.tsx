@@ -7,12 +7,19 @@ import Underline from "@tiptap/extension-underline";
 import TextAlign from "@tiptap/extension-text-align";
 import Placeholder from "@tiptap/extension-placeholder";
 import ImageGallery from "./ImageGallery";
+import Image from "@tiptap/extension-image";
 
 function TextEditor() {
   const [showImageGallery, setShowImageGallery] = useState(false);
   const extensions = [
     StarterKit,
     Underline,
+    Image.configure({
+      inline: false,
+      HTMLAttributes: {
+        class: "w-[80%] mx-auto",
+      },
+    }),
     TextAlign.configure({
       types: ["heading", "paragraph"],
     }),
@@ -40,6 +47,9 @@ function TextEditor() {
     // content: `<h1>hello <strong>world</strong></h1>`,
   });
   // editor?.commands.setContent("") //agar database se data aa rha h toh useeffect se set kr krdegy
+  const onImageSelect = (image: string) => {
+    editor?.chain().focus().setImage({ src: image, alt: "This is an image" }).run();
+  };
   return (
     <>
       <div className="h-screen flex flex-col space-y-6">
@@ -53,7 +63,11 @@ function TextEditor() {
           <EditorContent editor={editor} className="h-full" />
         </div>
       </div>
-      <ImageGallery visible={showImageGallery} onClose={setShowImageGallery} />
+      <ImageGallery
+        onSelect={onImageSelect}
+        visible={showImageGallery}
+        onClose={setShowImageGallery}
+      />
     </>
   );
 }

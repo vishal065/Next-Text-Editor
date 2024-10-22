@@ -10,8 +10,15 @@ interface Props {
 const ToolButton: FC<Props> = ({ children, active, onClick }) => {
   return (
     <button
-      className={clsx("p-2", active ? "bg-black text-white" : "text-black")}
-      onClick={onClick}
+      className={clsx(
+        "p-2",
+        active ? "bg-black text-white text-lg scale-105 rounded" : "text-black"
+      )}
+      onClick={() => {
+        onClick!();
+        console.log(active);
+        console.log(children);
+      }}
     >
       {children}
     </button>
