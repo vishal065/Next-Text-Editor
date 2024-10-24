@@ -8,12 +8,22 @@ import TextAlign from "@tiptap/extension-text-align";
 import Placeholder from "@tiptap/extension-placeholder";
 import ImageGallery from "./ImageGallery";
 import Image from "@tiptap/extension-image";
+import Link from "@tiptap/extension-link";
 
 function TextEditor() {
   const [showImageGallery, setShowImageGallery] = useState(false);
   const extensions = [
     StarterKit,
     Underline,
+    Link.configure({
+      openOnClick: false,
+      autolink: false, //khud false kiya h
+      // defaultProtocol: "https",
+      linkOnPaste: true,
+      HTMLAttributes: {
+        target: "",
+      },
+    }),
     Image.configure({
       inline: false,
       HTMLAttributes: {
@@ -38,6 +48,7 @@ function TextEditor() {
   ];
   const editor = useEditor({
     extensions,
+    immediatelyRender: false,
     editorProps: {
       attributes: {
         class:
@@ -48,7 +59,11 @@ function TextEditor() {
   });
   // editor?.commands.setContent("") //agar database se data aa rha h toh useeffect se set kr krdegy
   const onImageSelect = (image: string) => {
-    editor?.chain().focus().setImage({ src: image, alt: "This is an image" }).run();
+    editor
+      ?.chain()
+      .focus()
+      .setImage({ src: image, alt: "This is an image" })
+      .run();
   };
   return (
     <>

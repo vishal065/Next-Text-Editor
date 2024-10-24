@@ -14,7 +14,9 @@ import {
   BiUnderline,
 } from "react-icons/bi";
 import ToolButton from "./ToolButton";
-import { ChainedCommands, Editor } from "@tiptap/react";
+import { BubbleMenu, ChainedCommands, Editor } from "@tiptap/react";
+import LinkForm from "./LinkForm";
+import LinkEditForm from "./LinkEditForm";
 
 interface Props {
   editor: Editor | null;
@@ -155,9 +157,19 @@ function Tools({ editor, onImageSelection }: Props) {
 
     return result;
   };
+  const handleLinkSubmission = (link: string) => {
+    if (link === "") {
+      editor?.chain().focus().extendMarkRange("link").unsetLink().run();
+      return;
+    }
+    editor?.chain().focus().extendMarkRange("link").setLink({ href: link });
+  };
+
+  
+  
 
   return (
-    <div>
+    <div className="flex items-center space-x-1">
       <select
         className="p-2"
         onChange={handleHeadingSelection}
@@ -169,6 +181,16 @@ function Tools({ editor, onImageSelection }: Props) {
           </option>
         ))}
       </select>
+      <LinkForm onSubmit={handleLinkSubmission}></LinkForm>
+      <BubbleMenu
+        editor={editor}
+        shouldShow={({ editor }) => editor.isActive("link")}
+      >
+        <LinkEditForm
+          initialState={getInitialLink()}
+          onSubmit={handleLinkSubmission}
+        />
+      </BubbleMenu>
       {tools.map(({ icon, task }, i) => (
         <ToolButton
           key={i}
