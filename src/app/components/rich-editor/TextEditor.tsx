@@ -77,6 +77,11 @@ function TextEditor() {
         <div className="flex-1">
           <EditorContent editor={editor} className="h-full" />
         </div>
+        <div className="p-4 text-right">
+          <button className="p-2 bg-black text-white" onClick={()=>{}}>
+            Create new post
+          </button>
+        </div>
       </div>
       <ImageGallery
         onSelect={onImageSelect}

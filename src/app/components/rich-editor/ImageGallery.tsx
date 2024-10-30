@@ -4,7 +4,7 @@ import { IoMdClose } from "react-icons/io";
 import { FileUploader } from "react-drag-drop-files";
 import { IoCloudUploadOutline } from "react-icons/io5";
 import GalleryImage from "./GalleryImage";
-import { uploadFile } from "@/app/actions/file";
+import { removeImage, uploadFile } from "@/app/actions/file";
 import { useImages } from "@/app/context/ImageProvider";
 
 interface Props {
@@ -20,6 +20,8 @@ const ImageGallery: FC<Props> = ({ visible, onClose, onSelect }) => {
   const images = image?.images;
   //
   const upadateImages = image?.updateImages;
+  //
+  const removeOldImage = image?.removeOldImage;
   //
   const handleClose = () => {
     onClose(!visible);
@@ -111,6 +113,15 @@ const ImageGallery: FC<Props> = ({ visible, onClose, onSelect }) => {
           {images?.map((item, i) => (
             <GalleryImage
               onSelectClick={() => handleSelection(item)}
+              onDeleteClick={async () => {
+                if (confirm("Are you sure")) {
+                  const id = item.split("/").slice(-2).join("/").split(".")[0];
+                  await removeImage(id);
+                }
+                if (removeOldImage) {
+                  removeOldImage(item);
+                }
+              }}
               key={i}
               src={item}
             />

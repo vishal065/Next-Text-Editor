@@ -165,8 +165,12 @@ function Tools({ editor, onImageSelection }: Props) {
     editor?.chain().focus().extendMarkRange("link").setLink({ href: link });
   };
 
-  
-  
+  const getInitialLink = () => {
+    const attributes = editor?.getAttributes("link");
+    if (attributes) {
+      return attributes.href;
+    }
+  };
 
   return (
     <div className="flex items-center space-x-1">

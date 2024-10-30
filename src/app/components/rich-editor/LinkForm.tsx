@@ -20,7 +20,7 @@ function LinkForm({ onSubmit }: Props) {
           <input
             type="text"
             value={Link}
-            onChange={(e) => setLink(e.target.value)}
+            onChange={({ target }) => setLink(target.value)}
             placeholder="https://url.com"
             className=" outline-none"
             onBlur={() => setShowForm(false)}

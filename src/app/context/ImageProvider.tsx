@@ -16,6 +16,7 @@ interface Props {
 interface InitialImageContext {
   images: string[];
   updateImages(images: string[]): void;
+  removeOldImage(src: string): void;
 }
 const context = createContext<InitialImageContext | null>(null);
 
@@ -25,12 +26,15 @@ const ImageProvider: FC<Props> = ({ children }) => {
   const updateImages = (data: string[]) => {
     setImages([...data, ...images]);
   };
+  const removeOldImage = (src: string) => {
+    setImages((old) => old.filter((img) => src !== img));
+  };
   useEffect(() => {
     readAllImages().then(setImages);
   }, []);
 
   return (
-    <context.Provider value={{ images, updateImages }}>
+    <context.Provider value={{ images, updateImages, removeOldImage }}>
       {children}
     </context.Provider>
   );
